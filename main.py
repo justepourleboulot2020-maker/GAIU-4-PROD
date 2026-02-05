@@ -1,9 +1,9 @@
 from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
+import os
 
-app = FastAPI(title="GAIU 4 API")
+app = FastAPI(title="GAIU 4 - Intelligence Artificielle")
 
-# On autorise ton interface v0 à parler au serveur
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -11,38 +11,36 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Simulation du branchement LLM (Claude/GPT)
+# Ici, on prépare la place pour la clé API
+API_KEY = os.getenv("AI_SERVICE_API_KEY", "MODE_DEMO")
+
 @app.get("/")
 async def root():
-    return {
-        "status": "online", 
-        "message": "GAIU 4 est operationnel",
-        "engine": "Connecté"
-    }
-
-@app.post("/analyze")
-async def analyze_document(data: dict):
-    user_text = data.get("text", "").lower()
-    if "passeport" in user_text or "identité" in user_text:
-        reponse = "Analyse : Pièce d'identité détectée. Extraction des données en cours... Statut : Prêt pour Auto-Fill."
-    elif "facture" in user_text or "edf" in user_text:
-        reponse = "Analyse : Justificatif de domicile détecté. Vérification de l'adresse... Statut : Conforme."
-    else:
-        reponse = f"GAIU 4 analyse votre demande : '{user_text}'. En attente de documents complémentaires."
-    return {"status": "success", "analysis": reponse}
+    return {"status": "online", "mode": "IA Gen Ready"}
 
 @app.post("/upload")
 async def upload_document(file: UploadFile = File(...)):
+    # 1. On récupère le fichier
+    content = await file.read()
     file_name = file.filename
-    extracted_data = {
-        "Nom": "DEMO UTILISATEUR",
-        "Institution": "INSTITUTION EUROPEENNE",
-        "Document": file_name,
-        "Statut": "Vérifié & Prêt pour export"
-    }
+    
+    # 2. Logique de l'IA Générative (Prompt Système)
+    # Dans la version finale, ce texte sera envoyé à Claude ou GPT
+    prompt_systeme = f"Tu es GAIU 4. Analyse le fichier {file_name} et extrais les entités administratives."
+    
+    # 3. Réponse simulée mais structurée comme une vraie IA
     return {
         "status": "success",
-        "analysis": f"Analyse terminée pour '{file_name}'. Données extraites avec succès.",
-        "data": extracted_data
+        "ai_analysis": {
+            "document_type": "Détection automatique en cours...",
+            "confidence_score": 0.98,
+            "extracted_fields": {
+                "nom": "Analyse via IA Gen...",
+                "validite": "Vérification en cours..."
+            },
+            "system_prompt_used": prompt_systeme
+        }
     }
 
 
