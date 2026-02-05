@@ -23,4 +23,12 @@ async def root():
         "message": "GAIU 4 est operationnel",
         "engine": "Orchestrator chargé" if orchestrator else "Orchestrator en attente"
     }
+@app.post("/analyze")
+async def analyze_document(data: dict):
+    # C'est ici que l'IA va travailler plus tard
+    user_input = data.get("text", "")
+    return {
+        "status": "success",
+        "analysis": f"GAIU 4 a reçu votre demande : '{user_input}'. Le moteur d'analyse est prêt."
+    }
 
