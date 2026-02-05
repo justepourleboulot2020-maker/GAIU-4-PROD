@@ -23,6 +23,27 @@ async def root():
         "message": "GAIU 4 est operationnel",
         "engine": "Orchestrator chargé" if orchestrator else "Orchestrator en attente"
     }
+from fastapi import UploadFile, File
+
+@app.post("/upload")
+async def upload_document(file: UploadFile = File(...)):
+    # Ici, le moteur reçoit le vrai fichier
+    file_name = file.filename
+    file_extension = file_name.split(".")[-1].lower()
+    
+    # Logique de reconnaissance automatique du type de fichier
+    if file_extension in ["jpg", "jpeg", "png"]:
+        result = f"Document '{file_name}' reçu. Type : Image/Scan. Lancement de l'OCR GAIU..."
+    elif file_extension == "pdf":
+        result = f"Document '{file_name}' reçu. Type : PDF Officiel. Analyse des couches de texte..."
+    else:
+        result = f"Fichier '{file_name}' reçu. Format non identifié, analyse profonde requise."
+
+    return {
+        "status": "success",
+        "filename": file_name,
+        "analysis": result
+    }
 @app.post("/analyze")
 async def analyze_document(data: dict):
     user_text = data.get("text", "").lower()
@@ -39,4 +60,5 @@ async def analyze_document(data: dict):
         "status": "success",
         "analysis": reponse
     }
+
 
