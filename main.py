@@ -25,10 +25,18 @@ async def root():
     }
 @app.post("/analyze")
 async def analyze_document(data: dict):
-    # C'est ici que l'IA va travailler plus tard
-    user_input = data.get("text", "")
+    user_text = data.get("text", "").lower()
+    
+    # Simulation d'intelligence agentique
+    if "passeport" in user_text or "identité" in user_text:
+        reponse = "Analyse : Pièce d'identité détectée. Extraction des données en cours... Statut : Prêt pour Auto-Fill."
+    elif "facture" in user_text or "edf" in user_text:
+        reponse = "Analyse : Justificatif de domicile détecté. Vérification de l'adresse... Statut : Conforme."
+    else:
+        reponse = f"GAIU 4 analyse votre demande : '{user_text}'. En attente de documents complémentaires."
+
     return {
         "status": "success",
-        "analysis": f"GAIU 4 a reçu votre demande : '{user_input}'. Le moteur d'analyse est prêt."
+        "analysis": reponse
     }
 
