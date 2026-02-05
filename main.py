@@ -4,6 +4,7 @@ import os
 
 app = FastAPI(title="GAIU 4 - Intelligence Artificielle")
 
+# Configuration de la porte d'entrée (CORS)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -11,36 +12,48 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Simulation du branchement LLM (Claude/GPT)
-# Ici, on prépare la place pour la clé API
-API_KEY = os.getenv("AI_SERVICE_API_KEY", "MODE_DEMO")
+# --- CONFIGURATION DU CERVEAU GAIU 4 ---
+GAIU_PROMPT_SYSTEM = """
+Tu es GAIU 4, l'IA spécialisée dans l'assistance administrative européenne.
+Ta mission est d'analyser les documents avec une précision chirurgicale.
+1. Identifie le type de document (Passeport, Facture, Attestation).
+2. Extrais les données clés (Nom, Prénom, Dates, Numéros d'identification).
+3. Vérifie la validité du document.
+"""
 
 @app.get("/")
 async def root():
-    return {"status": "online", "mode": "IA Gen Ready"}
+    return {
+        "status": "online",
+        "mode": "IA Gen Ready",
+        "version": "4.0.1"
+    }
 
 @app.post("/upload")
 async def upload_document(file: UploadFile = File(...)):
-    # 1. On récupère le fichier
-    content = await file.read()
     file_name = file.filename
     
-    # 2. Logique de l'IA Générative (Prompt Système)
-    # Dans la version finale, ce texte sera envoyé à Claude ou GPT
-    prompt_systeme = f"Tu es GAIU 4. Analyse le fichier {file_name} et extrais les entités administratives."
-    
-    # 3. Réponse simulée mais structurée comme une vraie IA
+    # On simule ici ce que l'IA (Claude/GPT) renverrait 
+    # une fois la clé API connectée dans les variables d'environnement.
     return {
         "status": "success",
-        "ai_analysis": {
-            "document_type": "Détection automatique en cours...",
-            "confidence_score": 0.98,
-            "extracted_fields": {
-                "nom": "Analyse via IA Gen...",
-                "validite": "Vérification en cours..."
+        "analysis_report": {
+            "agent": "GAIU 4",
+            "document_detected": file_name,
+            "extraction": {
+                "nom_complet": "EXTRACTION IA EN COURS",
+                "statut": "Analyse structurelle réussie"
             },
-            "system_prompt_used": prompt_systeme
+            "prompt_instructions": GAIU_PROMPT_SYSTEM.strip()
         }
+    }
+
+@app.post("/analyze")
+async def quick_analyze(data: dict):
+    user_text = data.get("text", "")
+    return {
+        "status": "success",
+        "message": f"GAIU 4 a traité votre message : '{user_text}'"
     }
 
 
